@@ -1,14 +1,32 @@
 import os
+from dotenv import load_dotenv
 import discord
 from discord.ext import tasks
 import datetime
 import pytz
 import openai
 
-# Load environment variables
+# Load environment variables from .env if present
+load_dotenv()
+
+# Required environment variables
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')  # Bot-Token
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  # OpenAI-Schlüssel
-CHANNEL_ID = int(os.getenv('CHANNEL_ID'))    # Channel für tägliche Grüße
+CHANNEL_ID_STR = os.getenv('CHANNEL_ID')     # Channel für tägliche Grüße
+
+# Validate environment variables
+if not DISCORD_TOKEN:
+    raise RuntimeError("DISCORD_TOKEN ist nicht gesetzt. Bitte in .env oder in den Umgebungsvariablen hinzufügen.")
+if not OPENAI_API_KEY:
+    raise RuntimeError("OPENAI_API_KEY ist nicht gesetzt. Bitte in .env oder in den Umgebungsvariablen hinzufügen.")
+if not CHANNEL_ID_STR:
+    raise RuntimeError("CHANNEL_ID ist nicht gesetzt. Bitte in .env oder in den Umgebungsvariablen hinzufügen.")
+
+try:
+    CHANNEL_ID = int(CHANNEL_ID_STR)
+except ValueError:
+    raise RuntimeError("CHANNEL_ID ist keine gültige ganze Zahl. Bitte überprüfe die Umgebungsvariable.")
+
 TIMEZONE = 'Europe/Berlin'
 TRIGGER_NAME = 'kleiner Tiger'               # Name, auf den der Bot reagiert
 
